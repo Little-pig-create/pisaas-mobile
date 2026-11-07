@@ -69,8 +69,8 @@ function resolveSecretFile(params) {
 
 const variants = {
   production: {
-    name: "Paseo",
-    packageId: "sh.paseo",
+    name: "PiSaas",
+    packageId: "com.pisaas.mobile",
     googleServicesFile: resolveSecretFile({
       envKey: "GOOGLE_SERVICES_FILE_PROD",
       fallbackRelativePath: "./.secrets/google-services.prod.json",
@@ -81,8 +81,8 @@ const variants = {
     }),
   },
   development: {
-    name: "Paseo Debug",
-    packageId: "sh.paseo.debug",
+    name: "PiSaas Debug",
+    packageId: "com.pisaas.mobile.debug",
     googleServicesFile: resolveSecretFile({
       envKey: "GOOGLE_SERVICES_FILE_DEBUG",
       fallbackRelativePath: "./.secrets/google-services.debug.json",
@@ -100,11 +100,11 @@ const nativeReleaseVersion = getNativeReleaseVersion(pkg.version);
 export default {
   expo: {
     name: variant.name,
-    slug: "voice-mobile",
+    slug: "pisaas-mobile",
     version: nativeReleaseVersion.appVersion,
     orientation: "default",
     icon: "./assets/images/icon.png",
-    scheme: "paseo",
+    scheme: "pisaas-mobile",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
@@ -144,6 +144,7 @@ export default {
     plugins: [
       "./modules/paseo-hardware-keyboard/app.plugin",
       "expo-router",
+      "expo-secure-store",
       withPasteInput,
       withAndroidScroll,
       [withAndroidAsyncStorageSize, 64],
@@ -197,10 +198,6 @@ export default {
       diagnosticRevision: process.env.PASEO_DIAGNOSTIC_REVISION,
       diagnosticBuildTime: process.env.PASEO_DIAGNOSTIC_BUILD_TIME,
       router: {},
-      eas: {
-        projectId: "0e7f65ce-0367-46c8-a238-2b65963d235a",
-      },
     },
-    owner: "getpaseo",
   },
 };

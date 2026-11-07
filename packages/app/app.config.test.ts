@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { execFileSync } from "node:child_process";
 import { afterEach, describe, expect, it } from "vitest";
 
 // Load the copies the Expo CLI uses for prebuild, not older hoisted ones.
@@ -14,6 +15,37 @@ interface ManifestEntry {
 }
 
 const originalFdroidFlag = process.env.PASEO_FDROID_BUILD;
+
+describe("PiSaas app identity", () => {
+  it.each([
+    ["production", "PiSaas", "com.pisaas.mobile"],
+    ["development", "PiSaas Debug", "com.pisaas.mobile.debug"],
+  ])("isolates the %s app from Paseo", (appVariant, name, packageId) => {
+    const configModule = requireFromExpoCli.resolve("@expo/config");
+    const output = execFileSync(
+      process.execPath,
+      [
+        "-e",
+        `const { getConfig } = require(${JSON.stringify(configModule)}); process.stdout.write(JSON.stringify(getConfig(process.cwd()).exp));`,
+      ],
+      {
+        cwd: __dirname,
+        env: { ...process.env, APP_VARIANT: appVariant },
+        encoding: "utf8",
+      },
+    );
+    const exp = JSON.parse(output);
+
+    expect(exp.name).toBe(name);
+    expect(exp.slug).toBe("pisaas-mobile");
+    expect(exp.scheme).toBe("pisaas-mobile");
+    expect(exp.ios.bundleIdentifier).toBe(packageId);
+    expect(exp.android.package).toBe(packageId);
+    expect(exp.plugins).toContain("expo-secure-store");
+    expect(exp.owner).toBeUndefined();
+    expect(exp.extra.eas).toBeUndefined();
+  });
+});
 
 async function resolveAndroidManifest() {
   const { exp } = await getPrebuildConfigAsync(__dirname, { platforms: ["android"] });

@@ -13,10 +13,16 @@ import {
   useLastWorkspaceSelection,
 } from "@/stores/navigation-active-workspace-store";
 import { shouldUseDesktopDaemon } from "@/desktop/daemon/desktop-daemon";
+import { isNative } from "@/constants/platform";
 
 const isDesktop = shouldUseDesktopDaemon();
 
 export default function Index() {
+  if (isNative) return <Redirect href="/pisaas" />;
+  return <HostIndex />;
+}
+
+function HostIndex() {
   const pathname = usePathname();
   const bootstrapState = useHostRuntimeBootstrapState();
   const anyOnlineHostServerId = useEarliestOnlineHostServerId();

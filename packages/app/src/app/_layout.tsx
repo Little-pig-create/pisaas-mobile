@@ -873,6 +873,7 @@ function RootStack() {
       nestedNavigatorScreens={ROOT_STACK_NESTED_NAVIGATOR_SCREENS}
     >
       <Stack.Screen name="index" />
+      <Stack.Screen name="pisaas" />
       <Stack.Protected guard={storeReady}>
         <Stack.Screen name="welcome" />
         <Stack.Screen name="settings/index" />
@@ -972,6 +973,25 @@ function RootProviders({ children }: { children: ReactNode }) {
 }
 
 function RootAppTree() {
+  if (isNative) {
+    return (
+      <GestureHandlerRootView style={flexStyle}>
+        <View style={layoutStyles.surfaceFill}>
+          <LucideProvider strokeWidth={ICON_STROKE_WIDTH}>
+            <AppearanceProvider>
+              <RootProviders>
+                <ThemedStack screenOptions={ROOT_STACK_SCREEN_OPTIONS}>
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="pisaas" />
+                </ThemedStack>
+              </RootProviders>
+            </AppearanceProvider>
+          </LucideProvider>
+        </View>
+      </GestureHandlerRootView>
+    );
+  }
+
   return (
     <GestureHandlerRootView style={flexStyle}>
       <View style={layoutStyles.surfaceFill}>
